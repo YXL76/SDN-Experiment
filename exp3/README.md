@@ -38,11 +38,11 @@ Mininet 数据中心应用价值：
 
 ### 一、实现 iperfmulti 功能生成多客户端随机产生 UDP 流量
 
-#### 1.
+#### 1. 修改 net.py，添加 iperfSingle 和 iperfMulti
 
-登录 Mininet 所在虚机，在 Mininet 目录下 `mininet/net.py` 文件中定义 `iperfSingle` 函数
+登录 Mininet 所在虚机，编辑在 Mininet 目录下 `mininet/net.py` 文件。
 
-在两个主机间进行 `iperf` udp 测试，并且在 server 端记录，实现 `iperfSingle` 函数：
+首先定义 `iperfSingle` 函数——在两个主机间进行 `iperf` udp 测试，并且在 server 端记录。之后定义 `iperfMulti`——依次为每一台主机随机选择另一台主机作为 `iperf` 的服务器端，通过调用 `iperfSingle`,自身以客户端身份按照指定参数发送 UDP 流，服务器生成的报告以重定向的方式输出到文件中，使用 `iperfmulti` 命令，主机随机地向另一台主机发起一条恒定带宽的 UDP 数据流：
 
 ```diff
 --- a/mininet/net.py
@@ -99,11 +99,7 @@ Mininet 数据中心应用价值：
          cpu: desired CPU fraction of each host
 ```
 
-#### 2.
-
-为 Mininet 添加自定义命令 `iperfmulti`，依次为每一台主机随机选择另一台主机作为 `iperf` 的服务器端，通过调用 `iperfSingle`,自身以客户端身份按照指定参数发送 UDP 流，服务器生成的报告以重定向的方式输出到文件中，使用 `iperfmulti` 命令，主机随机地向另一台主机发起一条恒定带宽的 UDP 数据流。
-
-#### 3.
+#### 2. 在 cli.py 中注册 iperfmulti 命令
 
 解析用户输入的命令，`net.py` 定义的 `iperfmulti` 命令需要在 CLI 类中注册这条自定义命令。
 
@@ -134,7 +130,7 @@ Mininet 数据中心应用价值：
          for node in self.mn.values():
 ```
 
-#### 4.
+#### 3. 在 bin/mn 中加入 iperfmulti 可执行命令
 
 将 `iperfmulti` 加入到对应的列表中。
 
@@ -152,11 +148,15 @@ Mininet 数据中心应用价值：
      """Run tests
 ```
 
-#### 5.
+#### 4. 重新编译 Mininet
 
-重新编译安装 Mininet。
+重新编译安装 Mininet：
 
-#### 6.
+```shell
+~/mininet/util/install.sh -n
+```
+
+#### 5. 验证修改
 
 重新创建网络，输入 `iperf`，可用 table 补全 `iperfmulti`，从而可使用 `iperfmulti` 进行流量随机模型的测试：
 
@@ -280,13 +280,13 @@ sudo mn --custom mininet/custom/fattree.py --topo mytopo --controller=remote,ip=
 
 ### 五、数据中心拓扑网络测——iperfmulti UDP 测试
 
-#### 1.
+#### 1. 进行测试
 
 在 Mininet 中执行 `iperfmulti` 命令，设置带宽参数为 0.025M，我们将能看到 8 台主机随机地向另外一台主机发送数据包。
 
 ![mininet-iperfmulti](./mininet-iperfmulti.png)
 
-#### 2.
+#### 2. 查看日志
 
 查看下的数据记录，如下所示：
 
@@ -299,3 +299,98 @@ sudo mn --custom mininet/custom/fattree.py --topo mytopo --controller=remote,ip=
 打开客户端数据记录：
 
 ![mininet-iperfmulti-client](./mininet-iperfmulti-client.png)
+
+### 六、自定义拓扑测试
+
+自定义拓扑代码：
+
+```python
+from mininet.topo import Topo
+
+
+class MyTopo( Topo ):
+    def build( self ):
+        sw1 = self.addSwitch( 'c1' )
+        sw2 = self.addSwitch( 'c2' )
+        sw3 = self.addSwitch( 'c3' )
+
+        sw4 = self.addSwitch( 'a4' )
+        sw5 = self.addSwitch( 'a5' )
+        sw6 = self.addSwitch( 'a6' )
+        sw7 = self.addSwitch( 'a7' )
+        sw8 = self.addSwitch( 'a8' )
+        sw9 = self.addSwitch( 'a9' )
+
+        sw10 = self.addSwitch( 'e10' )
+        sw11 = self.addSwitch( 'e11' )
+        sw12 = self.addSwitch( 'e12' )
+        sw13 = self.addSwitch( 'e13' )
+        sw14 = self.addSwitch( 'e14' )
+        sw15 = self.addSwitch( 'e15' )
+
+        self.addLink( sw4, sw1 )
+        self.addLink( sw4, sw2 )
+        self.addLink( sw5, sw1 )
+        self.addLink( sw5, sw2 )
+        self.addLink( sw5, sw3 )
+        self.addLink( sw6, sw1 )
+        self.addLink( sw6, sw2 )
+        self.addLink( sw6, sw3 )
+        self.addLink( sw7, sw1 )
+        self.addLink( sw7, sw2 )
+        self.addLink( sw7, sw3 )
+        self.addLink( sw8, sw1 )
+        self.addLink( sw8, sw2 )
+        self.addLink( sw8, sw3 )
+        self.addLink( sw9, sw1 )
+        self.addLink( sw9, sw2 )
+        self.addLink( sw9, sw3 )
+
+        self.addLink( sw10, sw4 )
+        self.addLink( sw10, sw5 )
+        self.addLink( sw11, sw4 )
+        self.addLink( sw11, sw5 )
+        self.addLink( sw12, sw6 )
+        self.addLink( sw12, sw7 )
+        self.addLink( sw13, sw6 )
+        self.addLink( sw13, sw7 )
+        self.addLink( sw14, sw8 )
+        self.addLink( sw14, sw9 )
+        self.addLink( sw15, sw8 )
+        self.addLink( sw15, sw9 )
+
+        count = 1
+        for sw in [sw10, sw11, sw12, sw13, sw14, sw15]:
+            for i in range( 2 ):
+                host = self.addHost( 'h{}'.format( count ) )
+                self.addLink( sw, host )
+                count += 1
+
+
+topos = { 'mytopo': ( lambda: MyTopo() ) }
+
+```
+
+拓扑结构图：
+
+![custom-odl-topo](./custom-odl-topo.png)
+
+启动 Mininet：
+
+![custom-start](./custom-start.png)
+
+检查连通性：
+
+![custom-pingall](./custom-pingall.png)
+
+对其进行与之前相同的测试，结果为：
+
+![custom-iperf-1](./custom-iperf-1.png)
+
+![custom-iperf-2](./custom-iperf-2.png)
+
+![custom-iperf-3](./custom-iperf-3.png)
+
+![custom-iperfmulti-out](./custom-iperfmulti-out.png)
+
+![custom-iperfmulti-client](./custom-iperfmulti-client.png)
