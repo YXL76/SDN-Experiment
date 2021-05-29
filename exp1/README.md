@@ -22,7 +22,7 @@
 
 ### OpenFlow 协议简介
 
-2006 年，斯坦福大学 Clean Slate 计划资助的 Ethane 项目开始部署，致力于企业网架构的创新，OpenFlow 协议的雏形就诞生于这个项目。2008 年，Nick McKeown 教授的一篇重要论文“OpenFlow：Enabling Innovation in Campus Networks”使得 OpenFlow 正式进入人们的视野，继而成为了标准化组织 ONF（Open Network Foundation，开放网络基金会）主推的南向接口协议。经过多年的发展，OpenFlow 现已成为 SDN 的主流南向接口协议之一。目前，OpenFlow 协议还在不断地演进中，本实验采用 OpenFlow v1.3 协议，并对控制器与 OpenFlow 交换机之间的交互过程进行深入分析。
+2006 年，斯坦福大学 Clean Slate 计划资助的 Ethane 项目开始部署，致力于企业网架构的创新，OpenFlow 协议的雏形就诞生于这个项目。2008 年，Nick McKeown 教授的一篇重要论文《OpenFlow：Enabling Innovation in Campus Networks》使得 OpenFlow 正式进入人们的视野，继而成为了标准化组织 ONF（Open Network Foundation，开放网络基金会）主推的南向接口协议。经过多年的发展，OpenFlow 现已成为 SDN 的主流南向接口协议之一。目前，OpenFlow 协议还在不断地演进中，本实验采用 OpenFlow v1.3 协议，并对控制器与 OpenFlow 交换机之间的交互过程进行深入分析。
 
 OpenFlow 主要有 3 种类型的消息，分别是 `Controller-to-Switch`、`Asynchronous` 和 `Symmetric` ，其中每个类型又包含多个子类型。`Controller-to-Switch` 消息由控制器发起，用于管理、查看交换机的状态。Asynchronous 消息由交换机发起，向控制器汇报交换机的事件和改变。 `Symmetric` 消息由控制器或交换机任一方发起，无需请求直接发起消息。详细信息如下表所示：
 

@@ -2,7 +2,7 @@
 
 ## 任务目的
 
-1. 了解 mininet 的命令使用，通过命令模拟创建 SDN 网络；
+1. 了解 Mininet 的命令使用，通过命令模拟创建 SDN 网络；
 2. 使用网络构建启动参数、内部交互命令及外部运行参数；
 3. 学习 Miniedit 可视化操作，生成 python 拓扑脚本。
 
@@ -172,4 +172,45 @@ sudo python mininet/sdnlab.py
 
 ![miniedit-run-script](./miniedit-run-script.png)
 
-### 四、件创建自定义拓扑
+### 四、创建自定义拓扑
+
+自定义拓扑代码：
+
+```python
+from mininet.topo import Topo
+
+
+class MyTopo( Topo ):
+    "Simple topology example."
+
+    def build( self ):
+        "Create custom topo."
+
+        sw1 = self.addSwitch( 's1' )
+        sw2 = self.addSwitch( 's2' )
+
+        host1 = self.addHost( 'h1' )
+        host2 = self.addHost( 'h2' )
+        host3 = self.addHost( 'h3' )
+        host4 = self.addHost( 'h4' )
+
+        self.addLink( sw2, sw1 )
+
+        self.addLink( sw1, host1 )
+        self.addLink( sw1, host2 )
+        self.addLink( sw1, host3 )
+
+        self.addLink( sw2, host4 )
+
+
+topos = { 'mytopo': ( lambda: MyTopo() ) }
+
+```
+
+拓扑结构图：
+
+![custom-topo](./custom-topo.png)
+
+使用 Mininet 构建网络：
+
+![custom-mn](./custom-mn.png)
