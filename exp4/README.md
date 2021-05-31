@@ -256,15 +256,39 @@ ovs-ofctl -O OpenFlow13 dump-flows br-sw
 
 ![flows-check-4](./flows-check-4.png)
 
+此时的流量分析为：
+
+![statistics-1](./statistics-1.png)
+
 分别在 3 台主机上测试：
+
+#### 主机 1
 
 ![custom-result-1](./custom-result-1.png)
 _host1_
 
+因为数据只能单向发送，所以无法收到应答。
+
+此时的流量分析为：
+
+![statistics-2](./statistics-2.png)
+
+#### 主机 2
+
 ![custom-result-2](./custom-result-2.png)
 _host2_
+
+此时的流量分析为：
+
+![statistics-3](./statistics-3.png)
+
+#### 主机 3
 
 ![custom-result-3](./custom-result-3.png)
 _host3_
 
-由图片可知，数据包只能按照主机 1=>主机 2=>主机 3 的方向发送。
+此时的流量分析为：
+
+![statistics-3](./statistics-3.png)
+
+综上，数据包只能按照主机 1=>主机 2=>主机 3 的方向发送。
